@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cactus Mini App</title>
+<style>
+    body {
+        background-color: #121212;
+        color: white;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+    nav {
+        display: flex;
+        justify-content: space-around;
+        background: #1f1f1f;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    nav button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .page {
+        display: none;
+        padding: 20px;
+        text-align: center;
+        padding-bottom: 70px;
+    }
+    .active {
+        display: block;
+    }
+    /* Game logo */
+    #game-logo {
+        width: 150px;
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+    #game-logo:active {
+        transform: scale(1.1) rotate(10deg);
+    }
+    /* Leaderboard */
+    .leaderboard-item {
+        display: flex;
+        justify-content: space-between;
+        background: #1f1f1f;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+    /* Friends */
+    .friend-item {
+        background: #1f1f1f;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+    /* Tasks */
+    .task-item {
+        background: #1f1f1f;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+    a {
+        color: #4cafef;
+        text-decoration: none;
+    }
+</style>
+</head>
+<body>
+
+<!-- Game Page -->
+<div id="game" class="page active">
+    <h1>Game</h1>
+    <p>Coins: <span id="coin-count">0</span></p>
+    <img src="https://via.placeholder.com/150?text=Cactus+Logo" id="game-logo" alt="Cactus Logo">
+</div>
+
+<!-- Leaderboard Page -->
+<div id="leaderboard" class="page">
+    <h1>Leaderboard</h1>
+    <div id="leaderboard-list"></div>
+</div>
+
+<!-- Friends Page -->
+<div id="friends" class="page">
+    <h1>Friends</h1>
+    <p>Your Referral Link:</p>
+    <p><a href="https://t.me/Cactusgeambot">https://t.me/Cactusgeambot</a></p>
+    <div id="friends-list"></div>
+</div>
+
+<!-- Tasks Page -->
+<div id="tasks" class="page">
+    <h1>Tasks</h1>
+    <div id="tasks-list"></div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <button onclick="showPage('game')">Game</button>
+    <button onclick="showPage('leaderboard')">Leaderboard</button>
+    <button onclick="showPage('friends')">Friends</button>
+    <button onclick="showPage('tasks')">Tasks</button>
+</nav>
+
+<script>
+    let coins = 0;
+
+    // Game tap event
+    document.getElementById('game-logo').addEventListener('click', () => {
+        coins += 5;
+        document.getElementById('coin-count').textContent = coins;
+    });
+
+    // Show page
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+
+    // Dummy Leaderboard Data
+    const leaderboardData = [
+        { username: "Alice", coins: 5000 },
+        { username: "Bob", coins: 3000 },
+        { username: "Charlie", coins: 1500 }
+    ];
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'leaderboard-item';
+        div.innerHTML = `<span>${item.username}</span> <span>${item.coins} coins</span>`;
+        leaderboardList.appendChild(div);
+    });
+
+    // Dummy Friends Data
+    const friendsData = [
+        { username: "Friend1" },
+        { username: "Friend2" }
+    ];
+    const friendsList = document.getElementById('friends-list');
+    friendsData.forEach(friend => {
+        const div = document.createElement('div');
+        div.className = 'friend-item';
+        div.textContent = friend.username;
+        friendsList.appendChild(div);
+    });
+
+    // Dummy Tasks Data
+    const tasksData = [
+        { name: "Join Telegram Channel", link: "https://t.me/Cactusgeam" },
+        { name: "Join Twitter", link: "https://x.com/Cactusgeam" },
+        { name: "Join Group", link: "https://t.me/Cactusgeams" },
+        { name: "Join HODL", link: "https://t.me/hodlcoin/app?startapp=refid6476973782" },
+        { name: "Join Harbor", link: "https://t.me/harbor_market_bot/app?startapp=ref_6476973782" },
+        { name: "Join Mrkt", link: "https://t.me/mrkt/app?startapp=6476973782" },
+        { name: "Join Void", link: "https://t.me/VoidNotHereBot/Void?startapp=6476973782" }
+    ];
+    const tasksList = document.getElementById('tasks-list');
+    tasksData.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.innerHTML = `<a href="${task.link}" target="_blank">${task.name}</a>`;
+        tasksList.appendChild(div);
+    });
+</script>
+
+</body>
+</html>
