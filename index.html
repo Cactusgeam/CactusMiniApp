@@ -4,164 +4,144 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cactus Mini App</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
 <style>
-  body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: #121212;
-    color: white;
-  }
-  header {
-    padding: 10px;
-    background-color: #1e1e1e;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header button {
-    background-color: #00B894;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  header button:hover {
-    background-color: #009b7a;
-  }
-  main {
-    padding: 20px;
-    text-align: center;
-  }
-  .hidden { display: none; }
-  img.cactus-logo {
-    width: 180px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  img.cactus-logo:active {
-    transform: scale(1.1) rotate(5deg);
-  }
-  .coins {
-    font-size: 18px;
-    margin-top: 10px;
-    color: gold;
-  }
-  nav {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #1e1e1e;
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 0;
-  }
-  nav button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 14px;
-    text-align: center;
-    cursor: pointer;
-  }
-  nav button.active {
-    color: #00FF7F;
-  }
-  .task-button {
-    background-color: #00B894;
-    color: white;
-    padding: 10px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 6px;
-    width: 80%;
-    cursor: pointer;
-  }
-  .task-button:hover {
-    background-color: #009b7a;
-  }
+    body {
+        background-color: #121212;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+    nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #1e1e1e;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        border-top: 2px solid #333;
+    }
+    nav a {
+        color: gray;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    nav a.active {
+        color: #00ff88;
+        font-weight: bold;
+    }
+    .page {
+        display: none;
+        padding: 20px;
+        padding-bottom: 60px;
+    }
+    .active-page {
+        display: block;
+    }
+    button {
+        background: #222;
+        border: none;
+        color: #00aaff;
+        padding: 10px 20px;
+        margin: 8px 0;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 90%;
+        max-width: 300px;
+    }
+    button:hover {
+        background: #333;
+    }
+    img.logo {
+        width: 180px;
+        margin: 20px auto;
+    }
+    .coin {
+        color: gold;
+        font-weight: bold;
+        font-size: 18px;
+    }
 </style>
-<script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
 </head>
 <body>
 
-<header>
-  <div id="walletAddress">Not Connected</div>
-  <button id="connectWallet">Connect Wallet</button>
-</header>
-
-<main>
-  <!-- Game Page -->
-  <section id="page-game">
+<!-- Game Page -->
+<div id="game" class="page active-page">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="wallet-status">Not Connected</span>
+        <button style="background:#00cc99;color:white;padding:5px 10px;border-radius:6px;" onclick="connectWallet()">Connect Wallet</button>
+    </div>
     <h2>🎮 Game</h2>
-    <img src="YOUR_CACTUS_LOGO_URL" class="cactus-logo" id="cactusLogo" alt="Cactus Logo">
-    <div class="coins">Coins: <span id="coinCount">0</span></div>
-  </section>
+    <div>
+        <img src="https://raw.githubusercontent.com/Cactusgeam/CactusMiniApp/main/cactus.png" alt="Cactus" class="logo">
+    </div>
+    <p class="coin">Coins: <span id="coin-count">0</span></p>
+</div>
 
-  <!-- Leaderboard -->
-  <section id="page-leaderboard" class="hidden">
+<!-- Leaderboard Page -->
+<div id="leaderboard" class="page">
     <h2>🏆 Leaderboard</h2>
-    <p>1. User123 - 5000 coins</p>
-    <p>2. CryptoFan - 4200 coins</p>
-    <p>3. TonLover - 3900 coins</p>
-  </section>
+    <p>1. Alice - 1500 coins</p>
+    <p>2. Bob - 1200 coins</p>
+    <p>3. You - <span id="your-coins-lb">0</span> coins</p>
+</div>
 
-  <!-- Friends -->
-  <section id="page-friends" class="hidden">
+<!-- Friends Page -->
+<div id="friends" class="page">
     <h2>👥 Friends</h2>
     <p>Your referral link:</p>
-    <input type="text" value="https://cactusgame.com/?ref=USERID" readonly style="width:90%; padding:5px;">
-    <p>Invited Friends:</p>
-    <ul>
-      <li>@friend1 - 500 coins</li>
-      <li>@friend2 - 500 coins</li>
-    </ul>
-  </section>
+    <input type="text" id="referral-link" readonly style="width:90%;padding:5px;text-align:center;">
+</div>
 
-  <!-- Tasks -->
-  <section id="page-tasks" class="hidden">
+<!-- Tasks Page -->
+<div id="tasks" class="page">
     <h2>⭐ Tasks</h2>
-    <button class="task-button" onclick="addCoins(300)">Join Telegram Channel</button>
-    <button class="task-button" onclick="addCoins(300)">Join Telegram Group</button>
-    <button class="task-button" onclick="addCoins(300)">Follow on X</button>
-  </section>
-</main>
+    <button onclick="completeTask()">Join Telegram</button>
+    <button onclick="completeTask()">Follow Twitter</button>
+    <button onclick="completeTask()">Join Discord</button>
+</div>
 
-<!-- Bottom Nav -->
+<!-- Navigation -->
 <nav>
-  <button onclick="showPage('game')" class="active">🎮 Game</button>
-  <button onclick="showPage('leaderboard')">🏆 Leaderboard</button>
-  <button onclick="showPage('friends')">👥 Friends</button>
-  <button onclick="showPage('tasks')">⭐ Tasks</button>
+    <a href="#" onclick="showPage('game', this)" class="active">🎮 Game</a>
+    <a href="#" onclick="showPage('leaderboard', this)">🏆 Leaderboard</a>
+    <a href="#" onclick="showPage('friends', this)">👥 Friends</a>
+    <a href="#" onclick="showPage('tasks', this)">⭐ Tasks</a>
 </nav>
 
 <script>
-  let coins = 0;
-  function addCoins(amount) {
-    coins += amount;
-    document.getElementById('coinCount').textContent = coins;
-  }
+let coins = localStorage.getItem("coins") ? parseInt(localStorage.getItem("coins")) : 0;
+document.getElementById("coin-count").innerText = coins;
+document.getElementById("your-coins-lb").innerText = coins;
 
-  document.getElementById('cactusLogo').addEventListener('click', () => addCoins(5));
+function showPage(pageId, el) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active-page"));
+    document.getElementById(pageId).classList.add("active-page");
+    document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+    el.classList.add("active");
+}
 
-  function showPage(page) {
-    document.querySelectorAll('main section').forEach(sec => sec.classList.add('hidden'));
-    document.getElementById(`page-${page}`).classList.remove('hidden');
-    document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`nav button[onclick="showPage('${page}')"]`).classList.add('active');
-  }
+function completeTask() {
+    coins += 300;
+    localStorage.setItem("coins", coins);
+    document.getElementById("coin-count").innerText = coins;
+    document.getElementById("your-coins-lb").innerText = coins;
+    alert("Task completed! +300 coins");
+}
 
-  // TON Wallet Connect
-  const tonConnectUI = new TON_CONNECT_UI.TonConnectUI();
-  document.getElementById('connectWallet').onclick = async () => {
-    try {
-      const connectedWallet = await tonConnectUI.connectWallet();
-      document.getElementById('walletAddress').textContent = connectedWallet.account.address;
-    } catch (err) {
-      alert('Failed to connect wallet');
-    }
-  };
+function connectWallet() {
+    document.getElementById("wallet-status").innerText = "Wallet Connected";
+}
+
+function generateReferralLink() {
+    let userId = "user" + Math.floor(Math.random() * 100000);
+    let link = `https://cactusgeam.github.io/CactusMiniApp/?ref=${userId}`;
+    document.getElementById("referral-link").value = link;
+}
+generateReferralLink();
 </script>
 
 </body>
